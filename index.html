@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ThumbAI — AI Creator Studio</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#07070b;color:#f7f7fb;font-family:Inter,Arial,sans-serif}
+button,input,textarea,select{font:inherit}.app{min-height:100vh;display:flex}
+.side{width:240px;position:fixed;inset:0 auto 0 0;background:#0d0d12;border-right:1px solid #20202a;padding:22px 14px}
+.logo{font-size:21px;font-weight:800;padding:8px 10px 28px}.logo b{color:#8d72ff}.nav button{width:100%;display:block;text-align:left;background:none;border:0;color:#9999a7;padding:12px;border-radius:10px;margin:4px 0;cursor:pointer}.nav button.active,.nav button:hover{background:#171520;color:#fff}
+.plan{position:absolute;left:14px;right:14px;bottom:18px;padding:15px;border:1px solid #30245e;background:#151126;border-radius:14px}.plan p{color:#9999a7;font-size:12px;line-height:1.5}.plan button{width:100%;border:0;border-radius:9px;padding:9px;background:#795cff;color:white;cursor:pointer}
+main{margin-left:240px;width:calc(100% - 240px)}header{height:66px;border-bottom:1px solid #20202a;display:flex;align-items:center;justify-content:space-between;padding:0 30px;color:#9999a7;font-size:12px}
+.content{max-width:1000px;margin:auto;padding:45px 25px 80px}.hero{text-align:center;margin-bottom:32px}.badge{display:inline-block;padding:7px 11px;border:1px solid #342a62;background:#141026;color:#ae9dff;border-radius:30px;font-size:11px}.hero h1{font-size:52px;line-height:1.05;letter-spacing:-2px;margin:15px 0}.grad{background:linear-gradient(90deg,#8064ff,#c28aff);color:transparent;background-clip:text}.hero p{color:#9999a7;max-width:620px;margin:auto;line-height:1.6}
+.card{background:#101016;border:1px solid #22222d;border-radius:18px;padding:22px;box-shadow:0 20px 60px #0005}.label{font-size:12px;color:#ddd;margin-bottom:8px;display:block}textarea{width:100%;height:130px;resize:vertical;background:#0a0a0e;border:1px solid #252531;border-radius:11px;color:#fff;padding:14px;outline:none}textarea:focus{border-color:#7559ff}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}select{width:100%;background:#0a0a0e;color:#fff;border:1px solid #252531;border-radius:10px;padding:11px}.generate{width:100%;margin-top:16px;border:0;border-radius:11px;padding:14px;background:linear-gradient(135deg,#7658ff,#9a7cff);color:#fff;font-weight:800;cursor:pointer}.generate:disabled{opacity:.6;cursor:wait}
+.result{display:none;margin-top:18px}.result.show{display:block}.resultbox{padding:18px;background:#0b0b10;border:1px solid #252531;border-radius:12px}.resultbox h2{margin:0 0 10px}.resultbox p{color:#b2b2bd;line-height:1.7;font-size:14px;white-space:pre-wrap}.copy{float:right;background:#191922;color:#fff;border:1px solid #292936;border-radius:8px;padding:7px 10px;cursor:pointer}
+.info{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:15px}.info div{background:#101016;border:1px solid #20202a;border-radius:13px;padding:15px}.info strong{display:block;font-size:13px;margin-bottom:6px}.info span{font-size:11px;color:#9999a7}
+.section{margin-top:55px}.section h2{margin-bottom:6px}.muted{color:#9999a7;font-size:13px}.pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.price{background:#101016;border:1px solid #22222d;border-radius:15px;padding:20px}.price.featured{border-color:#7158dc}.price h3{margin:0 0 10px}.amount{font-size:30px;font-weight:800}.price ul{padding-left:18px;color:#aaa;font-size:12px;line-height:2}.price button{width:100%;padding:10px;border:0;border-radius:9px;background:#1a1a23;color:#fff}.featured button{background:#7658ff}
+.history{display:grid;gap:8px;margin-top:18px}.item{padding:14px;background:#101016;border:1px solid #22222d;border-radius:10px}.item b{display:block}.item small{color:#9999a7}
+.toast{position:fixed;right:20px;bottom:20px;background:#181820;border:1px solid #2a2a36;padding:12px 15px;border-radius:10px;opacity:0;transform:translateY(10px);transition:.2s}.toast.show{opacity:1;transform:none}
+@media(max-width:800px){.side{transform:translateX(-100%)}main{margin:0;width:100%}.row,.pricing,.info{grid-template-columns:1fr}.hero h1{font-size:38px}.content{padding:30px 15px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="logo">✦ Thumb<b>AI</b></div>
+  <div class="nav">
+    <button class="active" onclick="page('generator',this)">⚡ Генератор</button>
+    <button onclick="page('history',this)">◷ История</button>
+    <button onclick="page('pricing',this)">◆ Тарифы</button>
+  </div>
+  <div class="plan"><b>Текущий план</b><p id="planText">Free · 1 генерация/месяц</p><button onclick="page('pricing')">Посмотреть тарифы</button></div>
+</aside>
+<main>
+<header><span>AI CREATOR STUDIO</span><span id="usage">Загрузка лимита…</span></header>
+<div class="content">
+<section id="generator">
+  <div class="hero"><span class="badge">● REAL AI · OPENROUTER</span><h1>Создавай идеи для <span class="grad">YouTube</span></h1><p>Опиши ролик — AI придумает сильную концепцию превью, заголовок и визуальный план.</p></div>
+  <div class="card">
+    <label class="label">Тема видео</label>
+    <textarea id="prompt" placeholder="Например: Я выжил 100 дней в Minecraft на одном чанке…"></textarea>
+    <div class="row">
+      <div><label class="label">Стиль</label><select id="style"><option>Gaming</option><option>Viral</option><option>Dark</option><option>Cinematic</option><option>Minimal</option><option>Minecraft</option></select></div>
+      <div><label class="label">Цель</label><select id="goal"><option>Максимальный CTR</option><option>Профессиональный вид</option><option>Удержание внимания</option><option>Весёлый формат</option></select></div>
+    </div>
+    <button class="generate" id="generate" onclick="generate()">✦ Сгенерировать через AI</button>
+    <div class="result" id="result">
+      <div style="margin:18px 0 8px"><b>Результат AI</b><button class="copy" onclick="copyResult()">Копировать</button></div>
+      <div class="resultbox"><h2 id="rTitle"></h2><p id="rText"></p></div>
+    </div>
+  </div>
+  <div class="info"><div><strong>⚡ Быстро</strong><span>Ответ приходит прямо из AI API.</span></div><div><strong>🎯 CTR</strong><span>Промпт специально заточен под YouTube.</span></div><div><strong>🔒 Лимиты</strong><span>Сервер контролирует план и дневные запросы.</span></div></div>
+</section>
+<section id="history" class="section" style="display:none"><h2>История</h2><p class="muted">Последние результаты сохраняются на сервере.</p><div id="historyList" class="history"></div></section>
+<section id="pricing" class="section" style="display:none"><h2>Тарифы</h2><p class="muted">В этой MVP-версии планы переключаются локально для тестирования.</p><div class="pricing">
+<div class="price"><h3>Free</h3><div class="amount">0₴</div><ul><li>1 генерация / месяц</li><li>Базовый AI</li><li>История</li></ul><button onclick="setPlan('free')">Выбрать Free</button></div>
+<div class="price featured"><h3>Pro</h3><div class="amount">149₴</div><ul><li>30 генераций / день</li><li>Расширенный промпт</li><li>История</li></ul><button onclick="setPlan('pro')">Выбрать Pro</button></div>
+<div class="price"><h3>Premium</h3><div class="amount">299₴</div><ul><li>100 генераций / день</li><li>Максимальный промпт</li><li>Приоритет</li></ul><button onclick="setPlan('premium')">Выбрать Premium</button></div>
+</div></section>
+</div></main></div>
+<div id="toast" class="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+function toast(x){$('toast').textContent=x;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2500)}
+function page(name,btn){
+ ['generator','history','pricing'].forEach(x=>$(x).style.display=x===name?'block':'none');
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active')); if(btn)btn.classList.add('active');
+ if(name==='history')loadHistory();
+}
+async function status(){
+ try{const r=await fetch('/api/status');const d=await r.json();$('usage').textContent=`${d.plan.toUpperCase()} · ${d.used}/${d.limit} сегодня`;$('planText').textContent=d.plan==='free'?'Free · 1 генерация/месяц':d.plan==='pro'?'Pro · 30/день':'Premium · 100/день'}catch(e){$('usage').textContent='Сервер не запущен'}
+}
+async function generate(){
+ const prompt=$('prompt').value.trim(); if(!prompt)return toast('Напиши тему видео');
+ const btn=$('generate');btn.disabled=true;btn.textContent='✦ AI думает…';
+ try{
+  const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,style:$('style').value,goal:$('goal').value})});
+  const d=await r.json(); if(!r.ok)throw new Error(d.error||'Ошибка сервера');
+  $('rTitle').textContent=d.title;$('rText').textContent=d.text;$('result').classList.add('show');toast('Готово 🚀');status();
+ }catch(e){toast(e.message)}
+ finally{btn.disabled=false;btn.textContent='✦ Сгенерировать через AI'}
+}
+async function loadHistory(){
+ const r=await fetch('/api/history');const d=await r.json();$('historyList').innerHTML=d.items?.length?d.items.map(x=>`<div class="item"><b>${esc(x.title)}</b><small>${esc(x.prompt)} · ${new Date(x.createdAt).toLocaleString('ru-RU')}</small></div>`).join(''):'<div class="item">История пока пустая.</div>'
+}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function copyResult(){navigator.clipboard.writeText($('rTitle').textContent+'\\n\\n'+$('rText').textContent);toast('Скопировано')}
+async function setPlan(plan){const r=await fetch('/api/dev-plan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan})});const d=await r.json();toast(d.message||'План изменён');status()}
+status();
+</script>
+</body>
+</html>
